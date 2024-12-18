@@ -108,7 +108,7 @@ This project is licensed under the MIT License.
 ### Contact
 For more information or questions, feel free to reach out:
 
-**Project Contributor:** [sorleuCode](https://github.com/sorleuCode)
+**Project Contributor:** [Muhammed Soliu](https://github.com/sorleuCode)
 **Email:** abubakarkehinde88@gmail.com
 **Twitter:** [kennySpec](https://x.com/kennySpec)
 
