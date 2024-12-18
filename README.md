@@ -108,9 +108,9 @@ This project is licensed under the MIT License.
 ### Contact
 For more information or questions, feel free to reach out:
 
-Project Contributor: sorleuCode
-Email: abubakarkehinde88@gmail.com
-Twitter: @kennySpec
+**Project Contributor:** sorleuCode
+**Email:** abubakarkehinde88@gmail.com
+**Twitter:** @kennySpec
 
 
 
