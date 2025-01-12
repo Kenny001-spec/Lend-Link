@@ -1,4 +1,3 @@
-// File: contracts/storage/LoanStorage.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -52,14 +51,10 @@ contract LoanStorage {
     mapping(address => uint256) public lenderAvailableFunds;
     mapping(address => CollateralRegistry.CollateralInfo) public supportedCollaterals;
 
-    // Helper functions for accessing CollateralTracker data
+    uint256[] AllLoansID;
 
-    function getCollateralAmount(uint256 loanId, address token) external   view returns (uint256) {
-        return loansCollateral[loanId][token];
-    }
+    
 
-    function setCollateralAmount(uint256 loanId, address token, uint256 amount) internal {
-        loansCollateral[loanId][token] = amount;
-    }
+   
 
 }
