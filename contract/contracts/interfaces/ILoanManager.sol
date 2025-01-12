@@ -12,6 +12,12 @@ interface ILoanManager {
     event CollateralAdded(address indexed token, uint256 maxLTV);
     event AutomaticMatch(uint256 indexed loanId, address indexed lender, address indexed borrower);
     event LoanLiquidated(uint256 indexed loanId, address indexed liquidator);
+    event LoanDisbursed(uint256 indexed loanId, address indexed borrower, uint256 loanAmount);
+    event RewardCollected(uint256 indexed loanId, uint256 reward);
+    event RewardsWithdrawn(address owner, uint256 contractBalance);
+    event LoanLiquidated(uint256 indexed loanId, address indexed lender, uint256 loanAmount);
+
+
 
     function requestLoan(
         uint256 amount,
@@ -21,5 +27,4 @@ interface ILoanManager {
     ) external payable;
 
     function makePartialRepayment(uint256 loanId, uint256 amount) external;
-    function accrueInterest(uint256 loanId) external;
 }

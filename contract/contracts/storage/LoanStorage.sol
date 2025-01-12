@@ -19,6 +19,7 @@ contract LoanStorage {
         uint256 startTime;
         bool active;
         bool repaid;
+        bool defaulted;
         uint256 repaidAmount;
     }
 
@@ -32,6 +33,7 @@ contract LoanStorage {
     struct LoanRequest {
         uint256 amount;
         uint256 maxInterestRate;
+        uint256 dueDate;
         uint256 duration;
         address[] acceptedCollaterals;
         bool matched;
@@ -53,8 +55,6 @@ contract LoanStorage {
 
     uint256[] AllLoansID;
 
-    
 
    
-
 }
