@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 library CollateralUtils {
     function calculateCollateralValue(uint256 amount, uint256 price, uint256 decimals) internal pure returns (uint256) {

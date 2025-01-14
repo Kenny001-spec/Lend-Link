@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
@@ -11,7 +11,6 @@ import "./libraries/CollateralUtils.sol";
 import "./libraries/CollateralRegistry.sol";
 import "./libraries/LoanCalculator.sol";
 import "./storage/LoanStorage.sol";
-
 
 contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
     using CollateralUtils for uint256;
