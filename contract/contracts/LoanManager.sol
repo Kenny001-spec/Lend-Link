@@ -118,6 +118,7 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
     }
 
 
+
     function accrueInterest(uint256 loanId) external  whenNotPaused nonReentrant {
     LoanCore storage loan = loansCore[loanId];
     LoanInterest storage interest = loansInterest[loanId];
