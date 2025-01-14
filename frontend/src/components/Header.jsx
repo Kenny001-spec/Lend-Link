@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Wallet } from "lucide-react";
 
 const Header = () => {
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
