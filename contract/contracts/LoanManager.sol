@@ -12,6 +12,7 @@ import "./libraries/CollateralRegistry.sol";
 import "./libraries/LoanCalculator.sol";
 import "./storage/LoanStorage.sol";
 
+
 contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
     using CollateralUtils for uint256;
 
