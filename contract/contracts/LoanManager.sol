@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
@@ -118,7 +118,8 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
     }
 
 
-    function accrueInterest(uint256 loanId) external whenNotPaused nonReentrant {
+
+    function accrueInterest(uint256 loanId) external  whenNotPaused nonReentrant {
     LoanCore storage loan = loansCore[loanId];
     LoanInterest storage interest = loansInterest[loanId];
     LoanStatus storage status = loansStatus[loanId];
