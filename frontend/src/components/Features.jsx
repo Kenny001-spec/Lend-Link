@@ -13,6 +13,9 @@ const featureItems = [
     title: 'Interest Calculation and Management',
     description: 'Automate interest accrual with both fixed and dynamic interest rate models.'
   },
+
+
+  
   {
     icon: Users,
     title: 'Borrower and Lender Accounts',
