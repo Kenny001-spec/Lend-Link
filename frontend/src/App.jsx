@@ -1,39 +1,61 @@
 import React from 'react';
-import './config/connection';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Features from './components/Features';
-import LoanSystem from './components/LoanSystem';
+import './config/connection'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingHeader from './components/LandingHeader';
+import AppHeader from './components/AppHeader';
 import HowItWorks from './components/HowItWorks';
-import ProjectOverview from './components/ProjectOverview';
-import SecurityMeasures from './components/SecurityMeansures';
-import NotificationsAndAlerts from './components/NotificationAndAlerts';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
+import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard';
+import LendPage from './pages/LendPage';
+import BorrowPage from './pages/BorrowPage';
 
-
-function App() {
+const App = () => {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 text-white">
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={<Hero />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/loan-system" element={<LoanSystem />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/project-overview" element={<ProjectOverview />} />
-            <Route path="/security-measures" element={<SecurityMeasures />} />
-            <Route path="/notifications" element={<NotificationsAndAlerts />} />
-            <Route path="/cta" element={<CTA />} />
-          </Routes>
-        </main>
-        <Footer />
+    <Router>
+      <div className="min-h-screen bg-black text-white">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <LandingHeader />
+                <LandingPage />
+                <HowItWorks />
+                <CTA />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/how-it-works"
+            element={
+              <>
+                <LandingHeader />
+                <HowItWorks />
+              </>
+            }
+          />
+          <Route
+            path="/app/*"
+            element={
+              <>
+                <AppHeader />
+                <main className="pt-16 px-4">
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/lend" element={<LendPage />} />
+                    <Route path="/borrow" element={<BorrowPage />} />
+                  </Routes>
+                </main>
+              </>
+            }
+          />
+        </Routes>
       </div>
-    </BrowserRouter>
+    </Router>
   );
-}
+};
 
 export default App;
