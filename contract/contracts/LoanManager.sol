@@ -45,6 +45,7 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
     uint256 duration,
     address[] calldata acceptedCollaterals
     ) external payable override whenNotPaused nonReentrant {
+        
     require(amount >= minLoanAmount && amount <= maxLoanAmount, "Invalid loan amount");
 
     uint256 requiredCollateral = (amount * collateralizationRatio) / 100;
