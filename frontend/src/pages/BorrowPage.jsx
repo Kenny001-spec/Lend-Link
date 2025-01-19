@@ -111,6 +111,7 @@ const BorrowPage = () => {
             </div>
           </div>
 
+
           
 
           {/* Loan Terms */}
