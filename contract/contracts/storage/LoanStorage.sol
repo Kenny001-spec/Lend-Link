@@ -28,15 +28,24 @@ contract LoanStorage {
         uint256 accruedInterest;
     }
 
- 
-
     struct LoanRequest {
         uint256 amount;
         uint256 maxInterestRate;
         uint256 dueDate;
         uint256 duration;
-        address[] acceptedCollaterals;
         bool matched;
+    }
+
+    struct LoanRequestDetail {
+        uint256 loanId;
+        address borrower;
+        uint256 amount;
+        uint256 maxInterestRate;
+        uint256 dueDate;
+        uint256 duration;
+        bool matched;
+        uint256 collateralAmount;
+        bool isActive;
     }
 
     // Main storage mappings
@@ -46,15 +55,13 @@ contract LoanStorage {
 
     // Changed from public to internal
 
-    mapping(uint256 => mapping(address => uint256)) public  loansCollateral;
+    mapping(uint256 => mapping(address => uint256)) public loansCollateral;
     mapping(address => uint256[]) public borrowerLoans;
     mapping(address => uint256[]) public lenderLoans;
     mapping(uint256 => LoanRequest) public loanRequests;
     mapping(address => uint256) public lenderAvailableFunds;
-    mapping(address => CollateralRegistry.CollateralInfo) public supportedCollaterals;
+    mapping(address => CollateralRegistry.CollateralInfo)
+        public supportedCollaterals;
 
     uint256[] AllLoansID;
-
-
-   
 }

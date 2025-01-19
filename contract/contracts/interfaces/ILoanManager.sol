@@ -22,8 +22,7 @@ interface ILoanManager {
     function requestLoan(
         uint256 amount,
         uint256 maxInterestRate,
-        uint256 duration,
-        address[] calldata acceptedCollaterals
+        uint256 duration
     ) external payable;
 
     function makePartialRepayment(uint256 loanId, uint256 amount) external;
