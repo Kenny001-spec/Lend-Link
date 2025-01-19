@@ -9,12 +9,14 @@ const BorrowPage = () => {
     selectedCollateral: 'ETH',
   });
 
+
   const [marketStats, setMarketStats] = useState({
     totalLiquidity: '1,234.56',
     avgInterestRate: '6.2',
     activeLoans: '45',
     availableToBorrow: '567.89',
   });
+
 
   const [userStats, setUserStats] = useState({
     activeLoans: [
@@ -25,6 +27,7 @@ const BorrowPage = () => {
     totalCollateral: '2.5',
     healthFactor: '1.2',
   });
+
 
   const [showActiveLoans, setShowActiveLoans] = useState(false); // State to toggle active loans visibility
 
@@ -79,8 +82,7 @@ const BorrowPage = () => {
               Borrowing assets involves risk of liquidation. Please ensure you understand how collateralization works.
             </p>
           </div>
-
-
+          
 
           {/* Amount Section */}
           <div className="p-4 bg-gray-900 rounded-md">
@@ -112,7 +114,6 @@ const BorrowPage = () => {
           </div>
 
 
-          
 
           {/* Loan Terms */}
           <div className="p-4 bg-gray-900 rounded-md">
