@@ -31,6 +31,7 @@ const DashboardContent = () => {
                 <div className="flex items-center mt-2 text-emerald-400 text-sm">
                   <ArrowUpRight className="h-4 w-4 mr-1" />
                   <span>12% this week</span>
+                  
                 </div>
               </div>
               <div className="p-3 bg-blue-900/20 rounded-full">
