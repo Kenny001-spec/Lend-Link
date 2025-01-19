@@ -80,6 +80,8 @@ const BorrowPage = () => {
             </p>
           </div>
 
+
+
           {/* Amount Section */}
           <div className="p-4 bg-gray-900 rounded-md">
             <h3 className="flex items-center space-x-2 mb-3">
@@ -108,6 +110,8 @@ const BorrowPage = () => {
               </div>
             </div>
           </div>
+
+          
 
           {/* Loan Terms */}
           <div className="p-4 bg-gray-900 rounded-md">
