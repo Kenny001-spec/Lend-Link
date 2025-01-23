@@ -4,7 +4,7 @@ import {
   Wallet, Clock, TrendingUp 
 } from 'lucide-react';
 
-// Mock data
+
 const mockLoans = [
   {
     id: "1",
@@ -224,3 +224,6 @@ const LendingPage = () => {
 };
 
 export default LendingPage;
+
+
+
