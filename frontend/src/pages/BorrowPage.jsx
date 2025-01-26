@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Wallet, Calendar, Shield, AlertTriangle, Info, DollarSign, Activity } from 'lucide-react';
 import React, { useState, useEffect } from "react"
 import { parseEther, formatEther } from "ethers"
 import {useMarketStats} from "../hooks/useMarketStats"
@@ -292,11 +294,13 @@ const BorrowPage = () => {
                     type="range"
                     min="1"
                     max="20"
+
                     step="0.1"
                     value={formData.maxInterestRate}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
+                        
                         maxInterestRate: Number.parseFloat(e.target.value),
                       }))
                     }
