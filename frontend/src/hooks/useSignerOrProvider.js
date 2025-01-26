@@ -2,11 +2,6 @@ import { useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { readOnlyProvider } from "../constants/readOnlyProvider";
-import { JsonRpcProvider } from "ethers";
-
-const readOnlyProvider = new JsonRpcProvider(
-  import.meta.env.VITE_BASE_RPC_URL
-);
 
 const useSignerOrProvider = () => {
   const [signer, setSigner] = useState();
