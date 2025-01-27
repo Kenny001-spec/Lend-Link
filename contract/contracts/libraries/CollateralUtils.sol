@@ -5,7 +5,7 @@ library CollateralUtils {
     function calculateCollateralValue(uint256 amount, uint256 price, uint256 decimals) internal pure returns (uint256) {
 
         
-        return  (amount /  price) * (10 ** decimals);
+        return (amount * (10 ** decimals) / price);
     }
 
     function calculateRequiredCollateral(
@@ -14,6 +14,7 @@ library CollateralUtils {
         uint256 collateralizationRatio,
         uint256 decimals
     ) internal pure returns (uint256) {
-        return (calculateCollateralValue(loanAmount, price, decimals) * collateralizationRatio) / 100;
+        
+        return (loanAmount * price * collateralizationRatio) / (100 * 10 ** decimals);
     }
 }

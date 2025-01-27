@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { formatEther } from 'ethers';
+import {  formatUnits } from 'ethers';
 import useContractInstance from './useContractInstance';
 import { toast } from 'react-toastify';
 
@@ -37,10 +37,10 @@ export const useMarketStats = () => {
           (totalInterestRate / activeLoansCount).toFixed(2) : '0';
 
         setStats({
-          totalLiquidity: formatEther(totalLiquidity),
+          totalLiquidity: (totalLiquidity),
           avgInterestRate,
           activeLoans: activeLoansCount.toString(),
-          availableToBorrow: formatEther(totalLiquidity)
+          availableToBorrow: formatUnits(totalLiquidity, 18)
         });
       } catch (error) {
         console.error('Error fetching market stats:', error);
