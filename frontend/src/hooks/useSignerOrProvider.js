@@ -8,18 +8,26 @@ const useSignerOrProvider = () => {
 
   const { walletProvider } = useAppKitProvider("eip155");
 
+  
   const provider = useMemo(
     () => (walletProvider ? new BrowserProvider(walletProvider) : null),
     [walletProvider]
   );
-
+  
+  console.log( {provider});
+  
   useEffect(() => {
-    if (!provider) return setSigner(null);
 
+    if (!provider) return setSigner(null);
+    
     provider.getSigner().then((newSigner) => {
+    console.log({newSigner})
+
       if (!signer) return setSigner(newSigner);
+
       if (newSigner.address === signer.address) return;
-      setSigner(newSigner);
+      console.log("Signer:", newSigner);
+       setSigner(newSigner);
     });
   }, [provider, signer]);
 

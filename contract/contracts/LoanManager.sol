@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-
 import "./interfaces/ILoanManager.sol";
 import "./libraries/CollateralUtils.sol";
 import "./libraries/CollateralRegistry.sol";
@@ -22,8 +21,8 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
     uint256 public collateralizationRatio = 120;
     uint256 public liquidationThreshold = 110; // 110%
     uint256 public loanCounter;
-    uint256 public minLoanAmount;
-    uint256 public maxLoanAmount;
+    uint256 public minLoanAmount = 10**18;
+    uint256 public maxLoanAmount = 100_000 * 10**18;
 
     constructor(IERC20 _linkToken, AggregatorV3Interface _priceFeed) {
         linkToken = _linkToken;
@@ -346,6 +345,17 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
             createMatchedLoan(loanId, bestLender, bestRate);
         }
     }
+
+    function getrequiredCollateralAmount(uint256 loanAmount) external view returns(uint256) {
+
+        uint256 ethPrice = getETHPrice();
+
+
+        return loanAmount.calculateRequiredCollateral(ethPrice, collateralizationRatio, priceFeed.decimals());
+
+    }
+
+
 
     function getLenderOfferedRate(
         address lender,
