@@ -12,9 +12,7 @@ const useSignerOrProvider = () => {
   const provider = useMemo(
     () => (walletProvider ? new BrowserProvider(walletProvider) : null),
     [walletProvider]
-  );
-  
-  console.log( {provider});
+
   
   useEffect(() => {
 
