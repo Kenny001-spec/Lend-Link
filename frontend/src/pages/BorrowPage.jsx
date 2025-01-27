@@ -1,14 +1,27 @@
-import { useState } from 'react';
-import { Wallet, Calendar, Shield, AlertTriangle, Info, DollarSign, Activity } from 'lucide-react';
 import React, { useState, useEffect } from "react"
-import { parseEther, formatEther } from "ethers"
-import {useMarketStats} from "../hooks/useMarketStats"
-import {useUserStats} from "../hooks/useUserStats"
-import {useRepayLoan} from "../hooks/useRepayLoan"
+import { parseEther, parseUnits } from "ethers"
+import { useMarketStats } from "../hooks/useMarketStats"
+import { useUserStats } from "../hooks/useUserStats"
+import { useRepayLoan } from "../hooks/useRepayLoan"
 import useCreateLoanRequest from "../hooks/useCreateLoanRequest"
 import { useAppKitAccount } from "@reown/appkit/react"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import { useCollateralCalculator } from "../hooks/useCollateralCalculator"
+
+
+  // Utility function to calculate the difference in seconds
+  const calculateTimeDifferenceInSeconds = (selectedDate) => {
+    const currentDate = new Date(); // Get the current date
+    const selectedDateObj = new Date(selectedDate); // Convert selected date to Date object
+    
+    const timeDifferenceInMilliseconds = selectedDateObj - currentDate; // Difference in milliseconds
+    const timeDifferenceInSeconds = timeDifferenceInMilliseconds / 1000; // Convert to seconds
+    
+    return timeDifferenceInSeconds;
+  }
+
+
 
 const BorrowPage = () => {
   const { address } = useAppKitAccount()
@@ -28,15 +41,16 @@ const BorrowPage = () => {
     healthFactor,
     loading: userLoading,
   } = useUserStats()
+
   const createLoanRequest = useCreateLoanRequest()
 
   const [formData, setFormData] = useState({
     amount: "",
     duration: 30,
-    maxInterestRate: 5.8,
+    maxInterestRate: 0,
     selectedCollateral: "LINK",
     selectedBorrowToken: "ETH",
-    date: new Date().toISOString().split("T")[0], 
+    date: new Date().toISOString().split("T")[0],
   })
 
   const [showActiveLoans, setShowActiveLoans] = useState(false)
@@ -44,11 +58,44 @@ const BorrowPage = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
   const [hasMetaMask, setHasMetaMask] = useState(false)
 
+  const calculateCollateral = useCollateralCalculator()
+  const [collateralAmount, setCollateralAmount] = useState("0")
+
+  // Replace the existing collateral calculation
+  useEffect(() => {
+    const updateCollateral = async () => {
+      if (formData.amount && !isNaN(formData.amount) && formData.amount > 0) {
+        try {
+          const required = await calculateCollateral(formData.amount)
+          setCollateralAmount(required)
+        } catch (error) {
+          console.error('Failed to calculate collateral:', error)
+          toast.error('Failed to calculate required collateral')
+        }
+      } else {
+        setCollateralAmount("0")
+      }
+    }
+
+    updateCollateral()
+  }, [formData.amount, calculateCollateral])
+
+
+
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
       setHasMetaMask(true)
     }
   }, [])
+
+
+  useEffect(() => {
+    // Calculate the time difference when the selected date changes
+    if (formData.date) {
+      const timeInSeconds = calculateTimeDifferenceInSeconds(formData.date);
+      console.log(`Time difference in seconds: ${timeInSeconds}`);
+    }
+  }, [formData.date]);
 
   useEffect(() => {
     if (marketError) {
@@ -74,7 +121,6 @@ const BorrowPage = () => {
     setShowActiveLoans((prev) => !prev)
   }
 
-  const collateralRequired = Number.parseFloat(formData.amount || 0) * 1.5
   const estimatedInterest =
     Number.parseFloat(formData.amount || 0) * (formData.maxInterestRate / 100) * (formData.duration / 365)
   const totalRepayment = Number.parseFloat(formData.amount || 0) + estimatedInterest
@@ -90,7 +136,7 @@ const BorrowPage = () => {
       return false
     }
 
-    if (Number.parseFloat(formData.amount) > Number.parseFloat(availableToBorrow)) {
+    if (Number.parseFloat(formData.amount) <= 0) {
       toast.error("Can't borrow more than your available balance!")
       return false
     }
@@ -108,22 +154,25 @@ const BorrowPage = () => {
 
     try {
       setSubmitLoading(true)
-      const amountInWei = parseEther(formData.amount.toString())
+      const amountInWei = parseUnits(formData.amount.toString(), 18)
       const interestRateScaled = Math.floor(formData.maxInterestRate * 100)
 
-      // Request account access
-      await window.ethereum.request({ method: "eth_requestAccounts" })
+      // // Request account access
+      // await window.ethereum.request({ method: "eth_requestAccounts" })
 
       // Create the loan request transaction
-      const transaction = await createLoanRequest(amountInWei, interestRateScaled, formData.duration * 86400)
 
-      // Send the transaction
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const tx = await signer.sendTransaction(transaction)
+      const collateralInWei = parseEther(collateralAmount.toString()) // Assuming collateralAmount is in ETH
 
-      // Wait for the transaction to be mined
-      await tx.wait()
+      await createLoanRequest(amountInWei, interestRateScaled, formData.duration * 86400, {value: collateralInWei})
+
+      // // Send the transaction
+      // const provider = new ethers.providers.Web3Provider(window.ethereum)
+      // const signer = provider.getSigner()
+      // const tx = await signer.sendTransaction(transaction)
+
+      // // Wait for the transaction to be mined
+      // await tx.wait()
 
       setFormData({
         amount: "",
@@ -282,9 +331,9 @@ const BorrowPage = () => {
                 <div className="space-y-2">
                   <label className="text-sm text-gray-400">Repayment Date</label>
                   <input
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
+                     type="date"
+                     value={formData.date}
+                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                     className="w-full bg-gray-800 bg-opacity-80 border border-blue-500 border-opacity-20 rounded-lg px-4 py-2 text-white"
                   />
                 </div>
@@ -300,7 +349,7 @@ const BorrowPage = () => {
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        
+
                         maxInterestRate: Number.parseFloat(e.target.value),
                       }))
                     }
@@ -336,8 +385,9 @@ const BorrowPage = () => {
                     ))}
                   </select>
                   <div className="text-lg text-gray-300 flex-1">
-                    Required: {collateralRequired.toFixed(2)} {formData.selectedCollateral}
+                    Required: {parseFloat(collateralAmount).toFixed(4)} ETH
                   </div>
+
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
                   <div>Collateral Ratio: 150%</div>
@@ -375,9 +425,10 @@ const BorrowPage = () => {
                 <div className="flex justify-between text-sm text-gray-400">
                   <span>Required Collateral</span>
                   <span>
-                    {collateralRequired.toFixed(2)} {formData.selectedCollateral}
+                    {parseFloat(collateralAmount).toFixed(4)} ETH
                   </span>
                 </div>
+
                 <div className="pt-3 mt-3 border-t border-blue-500 border-opacity-20 flex justify-between font-semibold text-lg">
                   <span>Total Repayment</span>
                   <span>
@@ -392,10 +443,9 @@ const BorrowPage = () => {
               onClick={toggleActiveLoans}
               disabled={isLoading || userLoading}
               className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 text-sm
-                ${
-                  isLoading || userLoading
-                    ? "opacity-50 cursor-not-allowed"
-                    : "bg-blue-500 bg-opacity-10 text-blue-500 border border-blue-500 border-opacity-20 hover:bg-opacity-20"
+                ${isLoading || userLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "bg-blue-500 bg-opacity-10 text-blue-500 border border-blue-500 border-opacity-20 hover:bg-opacity-20"
                 }`}
             >
               {isLoading || userLoading ? (
@@ -410,9 +460,8 @@ const BorrowPage = () => {
 
             {/* Active Loans */}
             <div
-              className={`transition-all duration-300 ease-out overflow-hidden ${
-                showActiveLoans ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-              }`}
+              className={`transition-all duration-300 ease-out overflow-hidden ${showActiveLoans ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+                }`}
             >
               <div className="bg-gray-900 bg-opacity-70 backdrop-blur-lg border border-blue-500 border-opacity-10 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-blue-500 mb-4">Active Loans</h3>
@@ -439,10 +488,9 @@ const BorrowPage = () => {
                           onClick={() => handleRepayLoan(loan.id)}
                           disabled={repayLoading}
                           className={`w-full py-2 px-4 rounded-lg transition-all duration-200 
-                            ${
-                              repayLoading
-                                ? "opacity-50 cursor-not-allowed"
-                                : "bg-blue-500 bg-opacity-10 text-blue-500 hover:bg-opacity-20"
+                            ${repayLoading
+                              ? "opacity-50 cursor-not-allowed"
+                              : "bg-blue-500 bg-opacity-10 text-blue-500 hover:bg-opacity-20"
                             }`}
                         >
                           {repayLoading ? "Processing..." : "Repay"}
@@ -461,10 +509,9 @@ const BorrowPage = () => {
               onClick={handleSubmit}
               disabled={submitLoading}
               className={`w-full py-4 px-4 rounded-xl font-semibold transition-all duration-200 
-                ${
-                  submitLoading
-                    ? "opacity-50 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white"
+                ${submitLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white"
                 }`}
             >
               {submitLoading ? (
