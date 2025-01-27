@@ -13,6 +13,7 @@ const useSignerOrProvider = () => {
     [walletProvider]
   );
 
+  
   useEffect(() => {
     if (!provider) return setSigner(null);
 
