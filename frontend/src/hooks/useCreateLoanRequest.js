@@ -11,8 +11,8 @@ const useCreateLoanRequest = () => {
   const { chainId } = useAppKitNetwork();
 
   return useCallback(
-    async (amount, maxInterestRate, duration) => {
-      if (!amount || !maxInterestRate || !duration) {
+    async (amount, maxInterestRate, duration, collateralInWei) => {
+      if (!amount || !maxInterestRate || !duration || !collateralInWei) {
         toast.error("All the fields are required");
         return;
       }
@@ -36,14 +36,18 @@ const useCreateLoanRequest = () => {
         const estimatedGas = await contract.requestLoan.estimateGas(
           amount,
           maxInterestRate,
-          duration
+          duration,
+          {
+            value: collateralInWei
+          }
         );
 
         const tx = await contract.requestLoan(
             amount,
             maxInterestRate,
-            duration, {
+            duration, { 
           gasLimit: (estimatedGas * BigInt(120)) / BigInt(100),
+          value: collateralInWei
         });
 
         const receipt = await tx.wait();

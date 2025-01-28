@@ -164,7 +164,7 @@ const BorrowPage = () => {
 
       const collateralInWei = parseEther(collateralAmount.toString()) // Assuming collateralAmount is in ETH
 
-      await createLoanRequest(amountInWei, interestRateScaled, formData.duration * 86400, {value: collateralInWei})
+      await createLoanRequest(amountInWei, interestRateScaled, formData.duration * 86400, collateralInWei)
 
       // // Send the transaction
       // const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -183,7 +183,6 @@ const BorrowPage = () => {
         date: new Date().toISOString().split("T")[0],
       })
 
-      toast.success("Loan request created successfully")
     } catch (error) {
       console.error("Error creating loan request:", error)
       toast.error(error.message || "Failed to create loan request")
