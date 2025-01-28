@@ -81,7 +81,6 @@ const BorrowPage = () => {
   }, [formData.amount, calculateCollateral])
 
 
-
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
       setHasMetaMask(true)
@@ -96,6 +95,7 @@ const BorrowPage = () => {
       console.log(`Time difference in seconds: ${timeInSeconds}`);
     }
   }, [formData.date]);
+  
 
   useEffect(() => {
     if (marketError) {
