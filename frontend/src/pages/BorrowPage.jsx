@@ -104,9 +104,6 @@ const BorrowPage = () => {
 
 
 
- 
-
-
 
 
   useEffect(() => {
@@ -125,6 +122,7 @@ const BorrowPage = () => {
     const timeDifferenceInMilliseconds = selectedDateObj - currentDate // Reversed the subtraction
     return Math.floor(Math.max(0, timeDifferenceInMilliseconds / 1000)) // Ensure non-negative value
   }
+
 
 
 

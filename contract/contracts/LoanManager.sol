@@ -49,7 +49,7 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
         uint256 ethPrice = getETHPrice();
 
         uint256 requiredCollateral = amount.calculateRequiredCollateral(ethPrice, collateralizationRatio, priceFeed.decimals());
-      
+
         require(msg.value >= requiredCollateral, "Insufficient collateral");
 
         loanCounter++;

@@ -3,9 +3,10 @@ import { BrowserProvider } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { readOnlyProvider } from "../constants/readOnlyProvider";
 
+
 const useSignerOrProvider = () => {
   const [signer, setSigner] = useState();
-
+  
   const { walletProvider } = useAppKitProvider("eip155");
 
   
@@ -13,7 +14,7 @@ const useSignerOrProvider = () => {
     () => (walletProvider ? new BrowserProvider(walletProvider) : null),
     [walletProvider]
   );
-  
+
   
   useEffect(() => {
 
