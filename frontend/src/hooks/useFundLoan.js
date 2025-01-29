@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import useContractInstance from "./useContractInstance";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { toast } from "react-toastify";
@@ -16,7 +16,8 @@ const useFundLoan = () => {
   const linkTokenContractAddress = import.meta.env.VITE_LINK_TOKEN_CONTRACT_ADDRESS;
   const lendLinkContractAddress = import.meta.env.VITE_LEND_LINK_CONTRACT_ADDRESS
 
-  const { signer, readOnlyProvider } = useSignerOrProvider();
+
+  const { signer } = useSignerOrProvider();
 
   const linkContract = new Contract(linkTokenContractAddress, linkTokenABI, signer);
 
@@ -43,7 +44,6 @@ const useFundLoan = () => {
       }
 
       try {
-        console.log("linkContract", linkContract);
 
         const estimatedGas = await linkContract?.approve?.estimateGas(
             lendLinkContractAddress,
@@ -76,20 +76,24 @@ const useFundLoan = () => {
 
           const trxReceipt = await txLoan.wait();
 
-          if (trxReceipt.status === 1) return;
+          if (trxReceipt.status === 1){
+            toast.success("Loan funded successfully")
+
+            return true;
+            } 
 
           toast.error("Failed to fund loan");
         } else {
           toast.error("Approval failed");
         }
       } catch (error) {
-        console.error("Error requesting loan", error);
+        console.error("Error funding loan", error);
 
         const errorDecoder = ErrorDecoder.create();
         const decodedError = await errorDecoder.decode(error);
 
         console.error("Decoded Error:", decodedError);
-        toast.error("Loan request failed", decodedError);
+        toast.error("Loan funding failed", decodedError);
       }
     },
     [contract, address, chainId, linkContract]

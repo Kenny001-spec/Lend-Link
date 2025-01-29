@@ -21,10 +21,10 @@ export const LoanContextProvider = ({ children }) => {
 
         switch (status) {
             case 1:
-                return "Created";
+                return true;
 
             default:
-                return "Not active";
+                return false;
         }
     };
 
@@ -45,10 +45,10 @@ export const LoanContextProvider = ({ children }) => {
 
 
                 const dueDate = new Date(Number(loan.dueDate) * 1000).toLocaleString(); // Convert Unix timestamp to human-readable date
+
                 const durationInDays = Math.floor(Number(loan.duration) / (60 * 60 * 24)); // Convert seconds to days
 
                 const loanId = Number(loan.loanId); // Convert loanId BigInt to number
-                const matchedStatus = loan.matched ? "Matched" : "Not Matched";
 
 
 
@@ -56,20 +56,20 @@ export const LoanContextProvider = ({ children }) => {
                 return {
 
                     loanId: loanId,
-                    borrower: loan.borrower,
+                    borrower: String(loan.borrower),
                     amount: formatUnits(loan.amount, 18, 3),
                     maxInterestRate: (Number(loan.maxInterestRate) / 100).toFixed(1),
                     dueDate: dueDate,
-                    duration: durationInDays,
-                    matched: matchedStatus,
+                    duration: durationInDays > 0 ? durationInDays : Math.floor(Number(loan.duration) / (60 * 60)),
+                    matched: loan.matched,
                     collateralAmount: formatEther(loan.collateralAmount, 18, 3).toLocaleString(),
-                    isActive: formatEnum(loan.active),
-                    collateralRatio: "120"
+                    isActive: Boolean(loan.isActive),
+                    collateralRatio: "120",
+                    isDays: durationInDays > 0 ? true : false
                 }
             });
 
             setLoanRequests(formattedLoanRequests)
-            console.log({ formattedLoanRequests });
         } catch (error) {
 
             console.log("Error fetching Loans", error);

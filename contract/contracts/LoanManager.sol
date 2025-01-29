@@ -205,7 +205,7 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
         require(msg.sender == loan.borrower, "Not borrower");
 
         // First, accrue interest before repayment
-        accrueInterest(loanId); // This will calculate and update interest first
+         (loanId); // This will calculate and update interest first
 
         // Calculate the total interest accrued so far
         uint256 totalInterest = interest.accruedInterest;
@@ -425,52 +425,45 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
         maxLoanAmount = _maxLoanAmount;
     }
 
-    function getUserLoanRequests(
-        address user
-    ) external view returns (LoanRequestDetail[] memory) {
-        uint256[] memory userLoanIds = borrowerLoans[user];
+    function getTotalLoanPayment(uint256 loanId) external view returns (uint256 totalPayment, uint256 principal, uint256 interestAmount) {
+        LoanCore storage loan = loansCore[loanId];
+        LoanStatus storage status = loansStatus[loanId];
+        LoanInterest storage interest = loansInterest[loanId];
 
-        // First pass to count valid requests
-        uint256 validCount = 0;
-        for (uint256 i = 0; i < userLoanIds.length; i++) {
-            uint256 loanId = userLoanIds[i];
-            LoanRequest memory request = loanRequests[loanId];
-
-            if (request.amount > 0) {
-                validCount++;
-            }
+        require(loan.amount > 0, "Loan does not exist");
+        
+        principal = loan.amount;
+        
+        // If loan is not active and already repaid, return the actual amounts paid
+        if (!status.active && status.repaid) {
+            return (status.repaidAmount, principal, status.repaidAmount - principal);
         }
-
-        // Create array with exact size
-        LoanRequestDetail[] memory details = new LoanRequestDetail[](
-            validCount
-        );
-        uint256 currentIndex = 0;
-
-        // Second pass to populate array
-        for (uint256 i = 0; i < userLoanIds.length; i++) {
-            uint256 loanId = userLoanIds[i];
-            LoanRequest memory request = loanRequests[loanId];
-            LoanStatus memory status = loansStatus[loanId];
-            LoanCore memory core = loansCore[loanId];
-
-            if (request.amount > 0) {
-                details[currentIndex] = LoanRequestDetail({
-                    loanId: loanId,
-                    borrower: core.borrower,
-                    amount: request.amount,
-                    maxInterestRate: request.maxInterestRate,
-                    dueDate: request.dueDate,
-                    duration: request.duration,
-                    matched: request.matched,
-                    collateralAmount: core.collateral,
-                    isActive: status.active
-                });
-                currentIndex++;
+        
+        // Calculate time elapsed since loan start or last interest accrual
+        uint256 timeElapsed;
+        if (status.active) {
+            if (interest.lastInterestAccrualTimestamp == 0) {
+                timeElapsed = block.timestamp - status.startTime;
+            } else {
+                timeElapsed = block.timestamp - interest.lastInterestAccrualTimestamp;
             }
+            
+            // Calculate additional interest since last accrual
+            uint256 additionalInterest = LoanCalculator.calculatePeriodicInterest(
+                loan.amount,
+                loan.interestRate,
+                timeElapsed
+            );
+            
+            
+            interestAmount = interest.accruedInterest + additionalInterest;
+        } else {
+            interestAmount = interest.accruedInterest;
         }
-
-        return details;
+        
+        totalPayment = principal + interestAmount - status.repaidAmount;
+        
+        return (totalPayment, principal, interestAmount);
     }
 
     function getAllLoanRequests()

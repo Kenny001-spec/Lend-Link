@@ -14,14 +14,12 @@ const useSignerOrProvider = () => {
     [walletProvider]
   );
   
-  console.log( {provider});
   
   useEffect(() => {
 
     if (!provider) return setSigner(null);
     
     provider.getSigner().then((newSigner) => {
-    console.log({newSigner})
 
       if (!signer) return setSigner(newSigner);
 

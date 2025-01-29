@@ -465,64 +465,27 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "loanId",
+        "type": "uint256"
       }
     ],
-    "name": "getUserLoanRequests",
+    "name": "getTotalLoanPayment",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "loanId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "borrower",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxInterestRate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "dueDate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "duration",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "matched",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "collateralAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isActive",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct LoanStorage.LoanRequestDetail[]",
-        "name": "",
-        "type": "tuple[]"
+        "internalType": "uint256",
+        "name": "totalPayment",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "principal",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "interestAmount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
