@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import useContractInstance from "./useContractInstance";
 import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { toast } from "react-toastify";
@@ -9,19 +9,20 @@ import linkTokenABI from "../ABI/linkToken.json"
 import useSignerOrProvider from "./useSignerOrProvider";
 
 
-const useRepayLoan = () => {
+const useFundLoan = () => {
   const contract = useContractInstance(true);
   const { address } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();
   const linkTokenContractAddress = import.meta.env.VITE_LINK_TOKEN_CONTRACT_ADDRESS;
   const lendLinkContractAddress = import.meta.env.VITE_LEND_LINK_CONTRACT_ADDRESS
 
+
   const { signer } = useSignerOrProvider();
 
   const linkContract = new Contract(linkTokenContractAddress, linkTokenABI, signer);
 
   return useCallback(
-    async (loanId, repayment) => {
+    async (loanId, loanAmount) => {
       if (!loanId) {
         toast.error("Invalid loan");
         return;
@@ -46,7 +47,7 @@ const useRepayLoan = () => {
 
         const estimatedGas = await linkContract?.approve?.estimateGas(
             lendLinkContractAddress,
-            repayment
+          loanAmount
         );
 
         if (!estimatedGas) {
@@ -54,7 +55,7 @@ const useRepayLoan = () => {
           return;
         }
 
-        const tx = await linkContract.approve(lendLinkContractAddress, repayment, {
+        const tx = await linkContract.approve(lendLinkContractAddress, loanAmount, {
           gasLimit: (estimatedGas * BigInt(120)) / BigInt(100),
         });
 
@@ -62,41 +63,42 @@ const useRepayLoan = () => {
         const trxReceipt = await tx.wait()
 
         if (trxReceipt.status === 1) {
-          const estimatedGasLoan = await contract.repayLoanWithReward.estimateGas(loanId);
+          const estimatedGasLoan = await contract.fundLoan.estimateGas(loanId);
 
           if (!estimatedGasLoan) {
             toast.error("Gas estimation for loan failed");
             return;
           }
 
-          const txLoan = await contract.repayLoanWithReward(loanId, {
+          const txLoan = await contract.fundLoan(loanId, {
             gasLimit: (estimatedGasLoan * BigInt(120)) / BigInt(100),
           });
 
           const trxReceipt = await txLoan.wait();
 
-          if (trxReceipt.status === 1) {
-            toast.success("Loan repaid successfully!")
-            return true;
-          }
+          if (trxReceipt.status === 1){
+            toast.success("Loan funded successfully")
 
-          toast.error("Failed to repay loan");
+            return true;
+            } 
+
+          toast.error("Failed to fund loan");
         } else {
           toast.error("Approval failed");
         }
       } catch (error) {
-        console.error("Error repaying loan", error);
+        console.error("Error funding loan", error);
 
         const errorDecoder = ErrorDecoder.create();
         const decodedError = await errorDecoder.decode(error);
 
         console.error("Decoded Error:", decodedError);
-        toast.error("Loan repayment failed", decodedError);
+        toast.error("Loan funding failed", decodedError);
       }
     },
     [contract, address, chainId, linkContract]
   );
 };
 
-export default useRepayLoan;
+export default useFundLoan;
 

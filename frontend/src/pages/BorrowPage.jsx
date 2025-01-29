@@ -1,66 +1,88 @@
 import React, { useState, useEffect } from "react"
-import { parseEther, parseUnits } from "ethers"
+import { formatUnits, parseEther, parseUnits } from "ethers"
 import { useMarketStats } from "../hooks/useMarketStats"
 import { useUserStats } from "../hooks/useUserStats"
-import { useRepayLoan } from "../hooks/useRepayLoan"
+import useRepayLoan  from "../hooks/useRepayLoan"
 import useCreateLoanRequest from "../hooks/useCreateLoanRequest"
 import { useAppKitAccount } from "@reown/appkit/react"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useCollateralCalculator } from "../hooks/useCollateralCalculator"
+import useGetLoanTotalRepayment from "../hooks/useGetLoanTotalRepayment"
 
 
-  // Utility function to calculate the difference in seconds
-  const calculateTimeDifferenceInSeconds = (selectedDate) => {
-    const currentDate = new Date(); // Get the current date
-    const selectedDateObj = new Date(selectedDate); // Convert selected date to Date object
-    
-    const timeDifferenceInMilliseconds = selectedDateObj - currentDate; // Difference in milliseconds
-    const timeDifferenceInSeconds = timeDifferenceInMilliseconds / 1000; // Convert to seconds
-    
-    return timeDifferenceInSeconds;
-  }
+
+
+
 
 
 
 const BorrowPage = () => {
   const { address } = useAppKitAccount()
-  const { repayLoan, loading: repayLoading } = useRepayLoan()
+  const repayLoan = useRepayLoan()
+  const [loanRepayments, setLoanRepayments] = useState({});
+
+
+  const getloanPayment = useGetLoanTotalRepayment()
+  
   const {
     totalLiquidity,
     avgInterestRate,
     activeLoans,
-    availableToBorrow,
     loading: marketLoading,
     error: marketError,
   } = useMarketStats()
+
   const {
     activeLoans: userActiveLoans,
-    totalBorrowed,
-    totalCollateral,
-    healthFactor,
     loading: userLoading,
   } = useUserStats()
 
+  // console.log((userActiveLoans))
+
   const createLoanRequest = useCreateLoanRequest()
 
-  const [formData, setFormData] = useState({
-    amount: "",
-    duration: 30,
-    maxInterestRate: 0,
-    selectedCollateral: "LINK",
-    selectedBorrowToken: "ETH",
-    date: new Date().toISOString().split("T")[0],
-  })
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + 30);
 
+    const [formData, setFormData] = useState({
+    amount: "",
+    duration: 0,
+    maxInterestRate: 0,
+    selectedCollateral: "ETH",
+    selectedBorrowToken: "LINK",
+    date: futureDate.toISOString().split("T")[0], // Set initial date to 30 days in future
+  })
+  
   const [showActiveLoans, setShowActiveLoans] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [submitLoading, setSubmitLoading] = useState(false)
-  const [hasMetaMask, setHasMetaMask] = useState(false)
-
+  
   const calculateCollateral = useCollateralCalculator()
   const [collateralAmount, setCollateralAmount] = useState("0")
 
+
+
+  useEffect(() => {
+    // Filter active loans
+   
+
+    // Fetch total repayment for each active loan
+    const fetchRepayments = async () => {
+        const repayments = {};
+        for (const loan of userActiveLoans) {
+          const repaymentDetails = await getloanPayment(loan.id);
+          if (repaymentDetails) {
+              repayments[loan.id] = repaymentDetails;
+          }
+
+        }
+        setLoanRepayments(repayments);
+    };
+
+    fetchRepayments();
+}, [userActiveLoans, getloanPayment]);
+  
   // Replace the existing collateral calculation
   useEffect(() => {
     const updateCollateral = async () => {
@@ -81,21 +103,28 @@ const BorrowPage = () => {
   }, [formData.amount, calculateCollateral])
 
 
-  useEffect(() => {
-    if (typeof window.ethereum !== "undefined") {
-      setHasMetaMask(true)
-    }
-  }, [])
+
 
 
   useEffect(() => {
     // Calculate the time difference when the selected date changes
     if (formData.date) {
-      const timeInSeconds = calculateTimeDifferenceInSeconds(formData.date);
-      console.log(`Time difference in seconds: ${timeInSeconds}`);
+      const timeInSeconds = calculateTimeDifferenceInSeconds(formData.date)
+      setFormData((prev) => ({ ...prev, duration: timeInSeconds }))
+      console.log({ timeInSeconds })
     }
-  }, [formData.date]);
-  
+  }, [formData.date])
+
+  const calculateTimeDifferenceInSeconds = (selectedDate) => {
+    console.log({selectedDate})
+    const currentDate = new Date()
+    const selectedDateObj = new Date(selectedDate)
+    const timeDifferenceInMilliseconds = selectedDateObj - currentDate // Reversed the subtraction
+    return Math.floor(Math.max(0, timeDifferenceInMilliseconds / 1000)) // Ensure non-negative value
+  }
+
+
+
 
   useEffect(() => {
     if (marketError) {
@@ -103,19 +132,6 @@ const BorrowPage = () => {
       toast.error(`Failed to fetch market statistics: ${marketError.message}`)
     }
   }, [marketError])
-
-  const tokens = {
-    ETH: {
-      name: "Ethereum",
-      symbol: "ETH",
-      logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
-    },
-    LINK: {
-      name: "Chainlink",
-      symbol: "LINK",
-      logo: "https://cryptologos.cc/logos/chainlink-link-logo.png",
-    },
-  }
 
   const toggleActiveLoans = () => {
     setShowActiveLoans((prev) => !prev)
@@ -141,49 +157,42 @@ const BorrowPage = () => {
       return false
     }
 
+    if(formData.duration <= 0) {
+      toast.error("Please select a future date")
+      return false;
+    }
+
     return true
   }
 
   const handleSubmit = async () => {
     if (!validateForm()) return
 
-    if (!hasMetaMask) {
-      toast.error("MetaMask is not installed. Please install MetaMask to proceed.")
-      return
-    }
+    
 
     try {
       setSubmitLoading(true)
       const amountInWei = parseUnits(formData.amount.toString(), 18)
       const interestRateScaled = Math.floor(formData.maxInterestRate * 100)
 
-      // // Request account access
-      // await window.ethereum.request({ method: "eth_requestAccounts" })
-
+     
       // Create the loan request transaction
 
       const collateralInWei = parseEther(collateralAmount.toString()) // Assuming collateralAmount is in ETH
 
-      await createLoanRequest(amountInWei, interestRateScaled, formData.duration * 86400, {value: collateralInWei})
+      await createLoanRequest(amountInWei, interestRateScaled, formData.duration, collateralInWei)
 
-      // // Send the transaction
-      // const provider = new ethers.providers.Web3Provider(window.ethereum)
-      // const signer = provider.getSigner()
-      // const tx = await signer.sendTransaction(transaction)
-
-      // // Wait for the transaction to be mined
-      // await tx.wait()
+    
 
       setFormData({
         amount: "",
         duration: 30,
         maxInterestRate: 5.8,
-        selectedCollateral: "LINK",
-        selectedBorrowToken: "ETH",
+        selectedCollateral: "ETH",
+        selectedBorrowToken: "LINK",
         date: new Date().toISOString().split("T")[0],
       })
 
-      toast.success("Loan request created successfully")
     } catch (error) {
       console.error("Error creating loan request:", error)
       toast.error(error.message || "Failed to create loan request")
@@ -192,12 +201,16 @@ const BorrowPage = () => {
     }
   }
 
-  const handleRepayLoan = async (loanId) => {
-    if (repayLoading) return
+  const handleRepayLoan = async (loanId, repayment) => {
+    if (isLoading) return
+    setIsLoading(true)
 
     try {
-      await repayLoan(loanId)
-      toast.success("Loan repaid successfully")
+      const result = await repayLoan(loanId, repayment)
+      if(result) {
+        setIsLoading(false);
+        return
+      }
     } catch (error) {
       console.error("Error repaying loan:", error)
       toast.error(error.message || "Failed to repay loan")
@@ -245,7 +258,6 @@ const BorrowPage = () => {
               {renderStatCard("Total Liquidity", `${totalLiquidity} LINK`, "💧", marketLoading)}
               {renderStatCard("Interest Rate", `${avgInterestRate}%`, "📈", marketLoading)}
               {renderStatCard("Active Loans", activeLoans, "🔄", marketLoading)}
-              {renderStatCard("Available", `${availableToBorrow} LINK`, "💰", marketLoading)}
             </>
           )}
         </div>
@@ -274,6 +286,7 @@ const BorrowPage = () => {
                         selectedBorrowToken: newToken,
                         selectedCollateral: newToken, // Synchronize collateral
                       }))
+
                     }}
                     className="bg-gray-800 bg-opacity-80 border border-blue-500 border-opacity-20 rounded-lg px-4 py-2 text-white w-24 appearance-none bg-no-repeat bg-right"
                     style={{
@@ -281,11 +294,9 @@ const BorrowPage = () => {
                         "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
                     }}
                   >
-                    {Object.entries(tokens).map(([symbol, token]) => (
-                      <option key={symbol} value={symbol}>
-                        {symbol}
-                      </option>
-                    ))}
+                    <option>
+                      LINK
+                    </option>
                   </select>
                   <div className="flex-1 flex gap-2">
                     <input
@@ -305,21 +316,8 @@ const BorrowPage = () => {
                       className="flex-1 bg-gray-800 bg-opacity-80 border border-blue-500 border-opacity-20 rounded-lg px-4 py-2 text-white placeholder-gray-400"
                       placeholder="Enter amount"
                     />
-                    <button
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          amount: availableToBorrow,
-                        }))
-                      }
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm"
-                    >
-                      MAX
-                    </button>
+
                   </div>
-                </div>
-                <div className="text-sm text-gray-400">
-                  Available: {availableToBorrow} {formData.selectedBorrowToken}
                 </div>
               </div>
             </div>
@@ -331,9 +329,15 @@ const BorrowPage = () => {
                 <div className="space-y-2">
                   <label className="text-sm text-gray-400">Repayment Date</label>
                   <input
-                     type="date"
-                     value={formData.date}
-                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    type="date"
+                    value={formData.date}
+                    min={new Date().toISOString().split("T")[0]} // Prevent selecting past dates
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        date: e.target.value,
+                      }))
+                    }
                     className="w-full bg-gray-800 bg-opacity-80 border border-blue-500 border-opacity-20 rounded-lg px-4 py-2 text-white"
                   />
                 </div>
@@ -378,11 +382,10 @@ const BorrowPage = () => {
                         "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
                     }}
                   >
-                    {Object.entries(tokens).map(([symbol, token]) => (
-                      <option key={symbol} value={symbol}>
-                        {symbol}
-                      </option>
-                    ))}
+                    <option >
+                      ETH
+                    </option>
+
                   </select>
                   <div className="text-lg text-gray-300 flex-1">
                     Required: {parseFloat(collateralAmount).toFixed(4)} ETH
@@ -390,7 +393,7 @@ const BorrowPage = () => {
 
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
-                  <div>Collateral Ratio: 150%</div>
+                  <div>Collateral Ratio: 120%</div>
                   <div>Liquidation Threshold: 110%</div>
                 </div>
               </div>
@@ -399,44 +402,41 @@ const BorrowPage = () => {
 
           <div className="space-y-6">
             {/* Loan Summary */}
-            <div className="bg-gray-900 bg-opacity-70 backdrop-blur-lg border border-blue-500 border-opacity-10 rounded-xl p-6 transition-all duration-300 hover:border-opacity-30 hover:shadow-lg hover:shadow-blue-500/10">
-              <h3 className="text-xl font-semibold text-blue-500 mb-4">Loan Summary</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm text-gray-400">
-                  <span>Borrow Amount</span>
-                  <span>
-                    {formData.amount || 0} {formData.selectedBorrowToken}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm text-gray-400">
-                  <span>Duration</span>
-                  <span>{formData.date}</span>
-                </div>
-                <div className="flex justify-between text-sm text-gray-400">
-                  <span>Interest Rate</span>
-                  <span>≤ {formData.maxInterestRate}%</span>
-                </div>
-                <div className="flex justify-between text-sm text-gray-400">
-                  <span>Estimated Interest</span>
-                  <span>
-                    {estimatedInterest.toFixed(2)} {formData.selectedBorrowToken}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm text-gray-400">
-                  <span>Required Collateral</span>
-                  <span>
-                    {parseFloat(collateralAmount).toFixed(4)} ETH
-                  </span>
-                </div>
+            {formData.amount ? (
+              <div className="bg-gray-900 bg-opacity-70 backdrop-blur-lg border border-blue-500 border-opacity-10 rounded-xl p-6 transition-all duration-300 hover:border-opacity-30 hover:shadow-lg hover:shadow-blue-500/10">
+                <h3 className="text-xl font-semibold text-blue-500 mb-4">Loan Summary</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <span>Borrow Amount</span>
+                    <span>
+                      {formData.amount || 0} {formData.selectedBorrowToken}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <span>Duration</span>
+                    <span>{formData.date}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <span>Interest Rate</span>
+                    <span>≤ {formData.maxInterestRate}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <span>Estimated Interest</span>
+                    <span>
+                      {estimatedInterest.toFixed(2)} {formData.selectedBorrowToken}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <span>Collateral</span>
+                    <span>
+                      {parseFloat(collateralAmount).toFixed(4)} ETH
+                    </span>
+                  </div>
 
-                <div className="pt-3 mt-3 border-t border-blue-500 border-opacity-20 flex justify-between font-semibold text-lg">
-                  <span>Total Repayment</span>
-                  <span>
-                    {totalRepayment.toFixed(2)} {formData.selectedBorrowToken}
-                  </span>
                 </div>
               </div>
-            </div>
+            ) : null}
+
 
             {/* Active Loans Toggle */}
             <button
@@ -448,7 +448,7 @@ const BorrowPage = () => {
                   : "bg-blue-500 bg-opacity-10 text-blue-500 border border-blue-500 border-opacity-20 hover:bg-opacity-20"
                 }`}
             >
-              {isLoading || userLoading ? (
+              {userLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   Loading...
@@ -476,24 +476,64 @@ const BorrowPage = () => {
                           <div className="font-semibold mb-1">Loan #{loan.id}</div>
                           <div className="flex items-center gap-2 text-sm text-gray-400">
                             <span>
-                              {loan.amount} {formData.selectedBorrowToken}
+                              Amount
                             </span>
                             <span className="text-blue-500">→</span>
                             <span>
-                              {loan.repaymentAmount} {formData.selectedBorrowToken}
+                            {loan.amount} {formData.selectedBorrowToken}
                             </span>
                           </div>
+
+                          <div className="flex items-center gap-2 text-sm text-gray-400">
+                            <span>
+                              Interest
+                            </span>
+                            <span className="text-blue-500">→</span>
+                            <span>
+                            {loanRepayments[loan.id]?.interestAmount}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-400">
+                            <span>
+                              Rate
+                            </span>
+                            <span className="text-blue-500">→</span>
+                            <span>
+                            {loan.interestRate}%
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-sm text-gray-400">
+                            <span>
+                              Repayment
+                            </span>
+                            <span className="text-blue-500">→</span>
+                            <span>
+                            {loanRepayments[loan.id]?.totalPayment}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-400">
+                            <span>
+                              Due date
+                            </span>
+                            <span className="text-blue-500">→</span>
+                            <span>
+                            {loan.dueDate}
+                            </span>
+                          </div>
+
+              
                         </div>
                         <button
-                          onClick={() => handleRepayLoan(loan.id)}
-                          disabled={repayLoading}
+                          onClick={() => handleRepayLoan(loan.id, parseUnits(loanRepayments[loan.id]?.totalPayment, 18))}
+                          disabled={isLoading}
                           className={`w-full py-2 px-4 rounded-lg transition-all duration-200 
-                            ${repayLoading
+                            ${isLoading
                               ? "opacity-50 cursor-not-allowed"
                               : "bg-blue-500 bg-opacity-10 text-blue-500 hover:bg-opacity-20"
                             }`}
                         >
-                          {repayLoading ? "Processing..." : "Repay"}
+                          {isLoading ? "Processing..." : "Repay"}
                         </button>
                       </div>
                     ))}
