@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useLoanRequests } from '../context/LoanContext.jsx';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 
 // Hook to fetch market statistics
 export const useMarketStats = () => {
+
+  const { address } = useAppKitAccount()
+
   const { loanRequests } = useLoanRequests();
 
   const [stats, setStats] = useState({
@@ -23,20 +27,30 @@ export const useMarketStats = () => {
         let activeLoansCount = 0;
         let totalInterestRate = 0;
         let totalLiquidity = 0;
+        let allActiveLoans = 0
+
+
+        loanRequests.forEach(loan => {
+          if (loan.isActive && loan.borrower.toLowerCase() === address.toLowerCase()) {
+            activeLoansCount++;
+          }
+        });
 
         loanRequests.forEach(loan => {
           if (loan.isActive) {
             totalLiquidity += loan.amount;
-            activeLoansCount++;
+            allActiveLoans++
             totalInterestRate += loan.maxInterestRate;
           }
         });
 
-        const avgInterestRate = activeLoansCount > 0 ? 
-          (totalInterestRate / activeLoansCount).toFixed(2) : '0';
+
+
+        const avgInterestRate = allActiveLoans > 0 ? 
+          (totalInterestRate / allActiveLoans).toFixed(2) : '0';
 
         setStats({
-          totalLiquidity: (totalLiquidity),
+          totalLiquidity: Number(totalLiquidity),
           avgInterestRate,
           activeLoans: activeLoansCount.toString(),
           availableToBorrow: totalLiquidity

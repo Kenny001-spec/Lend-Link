@@ -18,10 +18,10 @@ import useGetLoanTotalRepayment from "../hooks/useGetLoanTotalRepayment"
 
 
 const BorrowPage = () => {
-  const { address } = useAppKitAccount()
   const repayLoan = useRepayLoan()
   const [loanRepayments, setLoanRepayments] = useState({});
 
+  const { address } = useAppKitAccount()
 
   const getloanPayment = useGetLoanTotalRepayment()
   
@@ -255,8 +255,8 @@ const BorrowPage = () => {
           ) : (
             <>
               {renderStatCard("Total Liquidity", `${totalLiquidity} LINK`, "💧", marketLoading)}
-              {renderStatCard("Interest Rate", `${avgInterestRate}%`, "📈", marketLoading)}
-              {renderStatCard("Active Loans", activeLoans, "🔄", marketLoading)}
+              {renderStatCard("Average Interest", `${avgInterestRate}%`, "📈", marketLoading)}
+              {renderStatCard("My active Loans", activeLoans, "🔄", marketLoading)}
             </>
           )}
         </div>
@@ -463,10 +463,10 @@ const BorrowPage = () => {
                 }`}
             >
               <div className="bg-gray-900 bg-opacity-70 backdrop-blur-lg border border-blue-500 border-opacity-10 rounded-xl p-6">
-                <h3 className="text-xl font-semibold text-blue-500 mb-4">Active Loans</h3>
-                {userActiveLoans && userActiveLoans.length > 0 ? (
+                {userActiveLoans.find((loan) => String(loan.borrower).toLowerCase() === address.toString().toLowerCase() ) && (<h3 className="text-xl font-semibold text-blue-500 mb-4">Active Loans</h3>)}
+                {(userActiveLoans.length  && userActiveLoans) && userActiveLoans.find((loan) => String(loan.borrower).toLowerCase() === address.toString().toLowerCase() ) ? (
                   <div className="space-y-4">
-                    {userActiveLoans.map((loan) => loan.borrower === address && (
+                    {userActiveLoans.filter((loan) => String(loan.borrower).toLowerCase() === address.toString().toLowerCase() && loan.isActive)?.map((loan) =>  (
                       <div
                         key={loan.id}
                         className="bg-gray-800 bg-opacity-80 border border-blue-500 border-opacity-20 rounded-xl p-4"
@@ -489,7 +489,7 @@ const BorrowPage = () => {
                             </span>
                             <span className="text-blue-500">→</span>
                             <span>
-                            {loanRepayments[loan.id]?.interestAmount}
+                            {loanRepayments[loan.id]?.interestAmount} 
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-400">
