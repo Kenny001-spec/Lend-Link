@@ -92,13 +92,7 @@ const DeFiLanding = () => {
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </span>
               </button>
-              {/* <button
-                className="px-8 py-4 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
-              >
-                <span className="relative flex items-center">
-                  MarketPlace
-                </span>
-              </button> */}
+             
             </motion.div>
 
             {/* Feature icons */}
