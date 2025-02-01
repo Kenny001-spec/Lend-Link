@@ -49,7 +49,8 @@ useEffect(() => {
           duration: loan.duration,
           interestRate: loan.maxInterestRate,
           dueDate: loan.dueDate,
-          isDays: loan.isDays
+          isDays: loan.isDays,
+          borrower: loan.borrower
         });
       });
 
