@@ -139,7 +139,6 @@ const BorrowPage = () => {
 
   const estimatedInterest =
     Number.parseFloat(formData.amount || 0) * (formData.maxInterestRate / 100) * (formData.duration / 365)
-  const totalRepayment = Number.parseFloat(formData.amount || 0) + estimatedInterest
 
   const validateForm = () => {
     if (!address) {
@@ -525,7 +524,7 @@ const BorrowPage = () => {
               
                         </div>
                         <button
-                          onClick={() => handleRepayLoan(loan.id, parseUnits(loanRepayments[loan.id]?.totalPayment, 18))}
+                          onClick={() => handleRepayLoan(loan.id, loanRepayments[loan.id]?.totalPayment)}
                           disabled={isLoading}
                           className={`w-full py-2 px-4 rounded-lg transition-all duration-200 
                             ${isLoading
