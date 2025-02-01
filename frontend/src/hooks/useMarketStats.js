@@ -38,7 +38,7 @@ export const useMarketStats = () => {
 
         loanRequests.forEach(loan => {
           if (loan.isActive) {
-            totalLiquidity += loan.amount;
+            totalLiquidity += Number(loan.amount);
             allActiveLoans++
             totalInterestRate += loan.maxInterestRate;
           }
@@ -47,11 +47,11 @@ export const useMarketStats = () => {
 
 
         const avgInterestRate = allActiveLoans > 0 ? 
-          (totalInterestRate / allActiveLoans).toFixed(2) : '0';
+          (totalInterestRate / Number(allActiveLoans)).toFixed(2) : '0';
 
         setStats({
-          totalLiquidity: Number(totalLiquidity),
-          avgInterestRate,
+          totalLiquidity: totalLiquidity,
+          avgInterestRate: Number(avgInterestRate),
           activeLoans: activeLoansCount.toString(),
           availableToBorrow: totalLiquidity
         });

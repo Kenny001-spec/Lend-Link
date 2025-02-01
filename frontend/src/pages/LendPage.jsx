@@ -49,8 +49,9 @@ const LendingPage = () => {
 
         if(result) {
           setLoading(false)
-          setIsModalOpen(false);
           toast.success("Loan sucessfully funded")
+          setIsModalOpen(false);
+          
 
         }
       } catch (error) {
