@@ -11,12 +11,6 @@ import { useCollateralCalculator } from "../hooks/useCollateralCalculator"
 import useGetLoanTotalRepayment from "../hooks/useGetLoanTotalRepayment"
 
 
-
-
-
-
-
-
 const BorrowPage = () => {
   const { address } = useAppKitAccount()
   const repayLoan = useRepayLoan()

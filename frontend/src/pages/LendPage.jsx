@@ -7,8 +7,6 @@ import { useLoanRequests } from '../context/LoanContext.jsx';
 import useFundLoan from '../hooks/useFundLoan.js';
 import { parseUnits } from 'ethers';
 
-<
-
 const LendingPage = () => {
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');

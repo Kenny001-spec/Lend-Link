@@ -45,9 +45,7 @@ const AppHeader = () => {
           >
             <Bell className="h-5 w-5 text-gray-400" />
           </motion.button>
-          {/* <button className="px-6 py-2 bg-gradient-to-r from-blue-600 text-white rounded-md hover:bg-blue-900 transition-colors"> */}
             <appkit-button />
-          {/* </button> */}
          
         </div>
       </nav>
