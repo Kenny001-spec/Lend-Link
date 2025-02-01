@@ -12,7 +12,7 @@ const LendingPage = () => {
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false); // State to manage loading
+  const [loading, setLoading] = useState(false); 
 
   const handleFundLoan = useFundLoan();
 
