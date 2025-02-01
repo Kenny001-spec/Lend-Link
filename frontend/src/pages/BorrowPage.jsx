@@ -20,7 +20,7 @@ const BorrowPage = () => {
   const getloanPayment = useGetLoanTotalRepayment()
   
   const {
-    totalLiquidity,
+    totalLiquidity: totalLiquidity,
     avgInterestRate,
     activeLoans,
     loading: marketLoading,
