@@ -50,7 +50,8 @@ useEffect(() => {
           interestRate: loan.maxInterestRate,
           dueDate: loan.dueDate,
           isDays: loan.isDays,
-          borrower: loan.borrower
+          borrower: loan.borrower,
+          isActive: loan.isActive
         });
       });
 
