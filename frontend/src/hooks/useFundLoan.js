@@ -74,9 +74,9 @@ const useFundLoan = () => {
             gasLimit: (estimatedGasLoan * BigInt(120)) / BigInt(100),
           });
 
-          const trxReceipt = await txLoan.wait();
+          await txLoan.wait();
 
-          if (trxReceipt.status === 1){
+          if (txLoan.status === 1){
             toast.success("Loan funded successfully")
 
             return true;

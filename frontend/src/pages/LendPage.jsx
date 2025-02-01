@@ -6,6 +6,7 @@ import {
 import { useLoanRequests } from '../context/LoanContext.jsx';
 import useFundLoan from '../hooks/useFundLoan.js';
 import { parseUnits } from 'ethers';
+import { toast } from 'react-toastify';
 
 
 
@@ -49,6 +50,7 @@ const LendingPage = () => {
         if(result) {
           setLoading(false)
           setIsModalOpen(false);
+          toast.success("Loan sucessfully funded")
 
         }
       } catch (error) {
