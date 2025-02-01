@@ -466,7 +466,7 @@ const BorrowPage = () => {
                 <h3 className="text-xl font-semibold text-blue-500 mb-4">Active Loans</h3>
                 {userActiveLoans && userActiveLoans.length > 0 ? (
                   <div className="space-y-4">
-                    {userActiveLoans.map((loan) => (
+                    {userActiveLoans.map((loan) => loan.borrower === address && (
                       <div
                         key={loan.id}
                         className="bg-gray-800 bg-opacity-80 border border-blue-500 border-opacity-20 rounded-xl p-4"
