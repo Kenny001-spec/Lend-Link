@@ -4,7 +4,7 @@ import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
 import { toast } from "react-toastify";
 import { baseSepolia } from "@reown/appkit/networks";
 import { ErrorDecoder } from "ethers-decode-error";
-import { Contract } from "ethers";
+import { Contract, parseUnits } from "ethers";
 import linkTokenABI from "../ABI/linkToken.json"
 import useSignerOrProvider from "./useSignerOrProvider";
 
@@ -22,6 +22,10 @@ const useRepayLoan = () => {
 
   return useCallback(
     async (loanId, repayment) => {
+
+      const numRepayment = Number(repayment);
+      const twiceRepayment = numRepayment * 2;
+      const stringRepayment = String(twiceRepayment)
       if (!loanId) {
         toast.error("Invalid loan");
         return;
@@ -46,7 +50,7 @@ const useRepayLoan = () => {
 
         const estimatedGas = await linkContract?.approve?.estimateGas(
             lendLinkContractAddress,
-            repayment
+            parseUnits(stringRepayment, 18)
         );
 
         if (!estimatedGas) {
@@ -54,7 +58,7 @@ const useRepayLoan = () => {
           return;
         }
 
-        const tx = await linkContract.approve(lendLinkContractAddress, repayment, {
+        const tx = await linkContract.approve(lendLinkContractAddress, parseUnits(stringRepayment, 18), {
           gasLimit: (estimatedGas * BigInt(120)) / BigInt(100),
         });
 
