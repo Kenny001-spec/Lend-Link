@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import {
   Shield, ArrowUpRight, AlertCircle,
-  Wallet, Clock, TrendingUp
+  Clock, TrendingUp
 } from 'lucide-react';
 import { useLoanRequests } from '../context/LoanContext.jsx';
 import useFundLoan from '../hooks/useFundLoan.js';
 import { parseUnits } from 'ethers';
-import { toast } from 'react-toastify';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 const LendingPage = () => {
   const [selectedLoan, setSelectedLoan] = useState(null);
@@ -14,12 +14,14 @@ const LendingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const { address } = useAppKitAccount();
+
   const handleFundLoan = useFundLoan();
   const { loanRequests } = useLoanRequests();
   const noneActiveLoans = loanRequests.filter((loan) => !loan.isActive && loan.collateralAmount != 0);
 
   const stats = {
-    totalLoans: noneActiveLoans.length,
+    totalLoans: noneActiveLoans.filter((loan) => !(String(loan.borrower).toString().toLowerCase() === address.toLowerCase())).length,
     avgInterestRate: (loanRequests.reduce((acc, loan) => acc + parseFloat(loan.maxInterestRate), 0) / loanRequests.length).toFixed(1),
   };
 
@@ -91,7 +93,7 @@ const LendingPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {noneActiveLoans
             .filter((loan) => filterStatus === 'high_yield' ? parseFloat(loan.maxInterestRate) > 5 : true)
-            .map((loan) => (
+            .map((loan) => !(String(loan.borrower).toString().toLowerCase() === address.toLowerCase()) && (
               <div key={loan.loanId} className="bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-all">
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
