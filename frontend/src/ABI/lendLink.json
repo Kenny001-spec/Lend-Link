@@ -426,11 +426,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "matched",
-            "type": "bool"
-          },
-          {
             "internalType": "uint256",
             "name": "collateralAmount",
             "type": "uint256"
@@ -438,6 +433,11 @@
           {
             "internalType": "bool",
             "name": "isActive",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "hasRepaid",
             "type": "bool"
           }
         ],

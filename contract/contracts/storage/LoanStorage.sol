@@ -43,9 +43,9 @@ contract LoanStorage {
         uint256 maxInterestRate;
         uint256 dueDate;
         uint256 duration;
-        bool matched;
         uint256 collateralAmount;
         bool isActive;
+        bool hasRepaid;
     }
 
     // Main storage mappings
