@@ -405,6 +405,7 @@ const BorrowPage = () => {
                     <span>
                       {formData.amount || 0} {formData.selectedBorrowToken}
                     </span>
+                    
                   </div>
                   <div className="flex justify-between text-sm text-gray-400">
                     <span>Duration</span>
