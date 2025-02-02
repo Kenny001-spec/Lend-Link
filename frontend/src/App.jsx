@@ -1,5 +1,5 @@
 import React from 'react';
-import './config/connection'
+import './config/connection';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingHeader from './components/LandingHeader';
 import AppHeader from './components/AppHeader';
@@ -10,6 +10,7 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import LendPage from './pages/LendPage';
 import BorrowPage from './pages/BorrowPage';
+import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
 
 const App = () => {
   return (
@@ -45,8 +46,22 @@ const App = () => {
                 <main className="pt-16 px-4">
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/lend" element={<LendPage />} />
-                    <Route path="/borrow" element={<BorrowPage />} />
+                    <Route
+                      path="/lend"
+                      element={
+                        <ProtectedRoute>
+                          <LendPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/borrow"
+                      element={
+                        <ProtectedRoute>
+                          <BorrowPage />
+                        </ProtectedRoute>
+                      }
+                    />
                   </Routes>
                 </main>
               </>

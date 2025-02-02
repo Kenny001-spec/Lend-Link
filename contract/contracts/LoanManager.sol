@@ -205,7 +205,7 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
         require(msg.sender == loan.borrower, "Not borrower");
 
         // First, accrue interest before repayment
-         (loanId); // This will calculate and update interest first
+         accrueInterest(loanId); // This will calculate and update interest first
 
         // Calculate the total interest accrued so far
         uint256 totalInterest = interest.accruedInterest;
@@ -500,9 +500,9 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
                     maxInterestRate: request.maxInterestRate,
                     dueDate: request.dueDate,
                     duration: request.duration,
-                    matched: request.matched,
                     collateralAmount: core.collateral,
-                    isActive: status.active
+                    isActive: status.active,
+                    hasRepaid: status.repaid
                 });
                 currentIndex++;
             }

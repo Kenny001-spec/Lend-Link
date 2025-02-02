@@ -58,16 +58,19 @@ export const LoanContextProvider = ({ children }) => {
                     loanId: loanId,
                     borrower: String(loan.borrower),
                     amount: formatUnits(loan.amount, 18, 3),
-                    maxInterestRate: (Number(loan.maxInterestRate) / 100).toFixed(1),
+                    maxInterestRate: (Number(loan.maxInterestRate) / 100).toFixed(2),
                     dueDate: dueDate,
                     duration: durationInDays > 0 ? durationInDays : Math.floor(Number(loan.duration) / (60 * 60)),
-                    matched: loan.matched,
                     collateralAmount: formatEther(loan.collateralAmount, 18, 3).toLocaleString(),
                     isActive: Boolean(loan.isActive),
+                    hasRepaid: Boolean(loan.hasRepaid),
                     collateralRatio: "120",
                     isDays: durationInDays > 0 ? true : false
                 }
             });
+
+            console.log({here: formattedLoanRequests})
+
 
             setLoanRequests(formattedLoanRequests)
         } catch (error) {
@@ -80,6 +83,7 @@ export const LoanContextProvider = ({ children }) => {
     useEffect(() => {
 
         getLoanRequests();
+
     }, []);
 
 

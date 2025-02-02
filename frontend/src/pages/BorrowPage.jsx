@@ -5,11 +5,10 @@ import { useUserStats } from "../hooks/useUserStats"
 import useRepayLoan  from "../hooks/useRepayLoan"
 import useCreateLoanRequest from "../hooks/useCreateLoanRequest"
 import { useAppKitAccount } from "@reown/appkit/react"
-import { ToastContainer, toast } from "react-toastify"
+import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useCollateralCalculator } from "../hooks/useCollateralCalculator"
 import useGetLoanTotalRepayment from "../hooks/useGetLoanTotalRepayment"
-
 
 const BorrowPage = () => {
   const repayLoan = useRepayLoan()
@@ -207,6 +206,8 @@ const BorrowPage = () => {
     } catch (error) {
       console.error("Error repaying loan:", error)
       toast.error(error.message || "Failed to repay loan")
+    } finally{
+      setIsLoading(false)
     }
   }
 
@@ -559,7 +560,6 @@ const BorrowPage = () => {
           </div>
         </div>
       </div>
-      <ToastContainer position="bottom-right" autoClose={5000} />
     </div>
   )
 }
