@@ -101,8 +101,12 @@ const DashboardContent = () => {
     setIsWithdrawing(true); // Start loading
 
     try {
-      await withdrawalHandler(withdrawAddress);
-      setWithdrawAddress(""); // Clear input after successful withdrawal
+      const result = await withdrawalHandler(withdrawAddress);
+      if(result) {
+
+        setWithdrawAddress(""); 
+        setContractBalance("0")
+      }
     } catch (error) {
       console.error("Withdrawal Error:", error);
       toast.error("Withdrawal failed. Please try again.");
