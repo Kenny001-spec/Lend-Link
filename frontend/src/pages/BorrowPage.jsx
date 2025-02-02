@@ -417,12 +417,6 @@ const BorrowPage = () => {
                     <span>≤ {formData.maxInterestRate}%</span>
                   </div>
                   <div className="flex justify-between text-sm text-gray-400">
-                    <span>Estimated Interest</span>
-                    <span>
-                      {estimatedInterest.toFixed(2)} {formData.selectedBorrowToken}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm text-gray-400">
                     <span>Collateral</span>
                     <span>
                       {parseFloat(collateralAmount).toFixed(4)} ETH
