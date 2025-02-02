@@ -22,15 +22,15 @@ const LandingHeader = () => {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/docs" className="text-gray-300 hover:text-blue-200 transition-colors">
+            <Link to="/docs" className="text-white hover:text-blue-400 transition-colors font-semibold">
               Docs
             </Link>
-            <Link to="/how-it-works" className="text-gray-300 hover:text-blue-200 transition-colors">
+            <Link to="/how-it-works" className="text-white hover:text-blue-400 transition-colors font-semibold">
               How It Works
             </Link>
             <Link
               to="/app"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-blue-600 to-blue-300 px-8 text-sm font-medium text-black transition-colors hover:bg-orange-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-gradient-to-r from-blue-600 to-blue-300 px-8 text-lg font-semibold text-black transition-colors"
             >
               Open dApp
             </Link>

@@ -10,8 +10,6 @@ import "react-toastify/dist/ReactToastify.css"
 import { useCollateralCalculator } from "../hooks/useCollateralCalculator"
 import useGetLoanTotalRepayment from "../hooks/useGetLoanTotalRepayment"
 
-
-
 const BorrowPage = () => {
   const repayLoan = useRepayLoan()
   const [loanRepayments, setLoanRepayments] = useState({});

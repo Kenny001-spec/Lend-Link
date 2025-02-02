@@ -8,11 +8,13 @@ import useFundLoan from '../hooks/useFundLoan.js';
 import { parseUnits } from 'ethers';
 import { toast } from 'react-toastify';
 
+
 const LendingPage = () => {
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useState(false); 
 
   const handleFundLoan = useFundLoan();
   const { loanRequests } = useLoanRequests();

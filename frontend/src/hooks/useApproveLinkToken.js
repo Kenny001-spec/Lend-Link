@@ -28,7 +28,7 @@ export const useApproveLinkToken = () => {
       return true
     } catch (error) {
       console.error("Failed to approve LINK token:", error)
-      toast.error("Failed to approve LINK token")
+      Okay.error("Failed to approve LINK token")
       return false
     } finally {
       setIsApproving(false)
