@@ -266,7 +266,7 @@ const BorrowPage = () => {
               </p>
             </div>
 
-            {/* Borrow Amount */}
+          
             <div className="bg-gray-900 bg-opacity-70 backdrop-blur-lg border border-blue-500 border-opacity-10 rounded-xl p-6 transition-all duration-300 hover:border-opacity-30 hover:shadow-lg hover:shadow-blue-500/10">
               <h3 className="text-xl font-semibold text-blue-500 mb-4">Borrow Amount</h3>
               <div className="space-y-4">
