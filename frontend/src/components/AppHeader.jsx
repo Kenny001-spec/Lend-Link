@@ -24,6 +24,7 @@ const AppHeader = () => {
               >
                 <Hexagon className="h-5 w-5 text-black" />
               </motion.div>
+              
               <span className="text-lg sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-300">
                 LENDLINK
               </span>
