@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 interface ILoanManager {
     enum InterestRateType { FIXED, VARIABLE }
 
-    event LoanRequested(uint256 indexed loanId, address indexed borrower, uint256 amount, uint256 collateral);
+    event LoanRequested(uint256 indexed loanId, address borrower, uint256 amount, uint256 collateral,uint256 maxInterestRate,uint256 duration);
     event LoanFunded(uint256 indexed loanId, address indexed lender);
     event LoanRepaid(uint256 indexed loanId, address indexed borrower, uint256 amount);
     event PartialRepayment(uint256 indexed loanId, address indexed borrower, uint256 amount);

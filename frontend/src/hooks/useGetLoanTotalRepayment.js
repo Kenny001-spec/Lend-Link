@@ -18,10 +18,10 @@ const useGetLoanTotalRepayment = () => {
                 return;
             }
 
-            if (!address) {
-                toast.error("Please connect your wallet");
-                return;
-            }
+            // if (!address) {
+            //     toast.error("Please connect your wallet");
+            //     return;
+            // }
 
             if (!contract) {
                 toast.error("Contract not found");

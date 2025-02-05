@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { TrendingUp, ShieldCheck, Target, ArrowUpRight, ChevronRight } from "lucide-react";
+import React, { useEffect, useState , useCallback, useMemo} from "react";
+import { TrendingUp, ShieldCheck, Target } from "lucide-react";
 import { useLoanRequests } from "../context/LoanContext";
 import { useAppKitAccount } from "@reown/appkit/react";
 import useGetLoanTotalRepayment from "../hooks/useGetLoanTotalRepayment";
@@ -32,7 +32,7 @@ const DashboardContent = () => {
   const getOnwerAddress = useGetOwnerAddress();
   const getContractBalance = useGetContractLinkBalance();
 
-  const fetchLoanPaymentDetails = async (loanId) => {
+  const fetchLoanPaymentDetails = useCallback(async (loanId) => {
     try {
       const paymentDetails = await getAllLoanRequests(loanId);
       setLoanPayments((prev) => ({
@@ -42,9 +42,9 @@ const DashboardContent = () => {
     } catch (error) {
       console.error("Error fetching payment details:", error);
     }
-  };
+  }, [getAllLoanRequests]);
 
-  const fetchCollateralDetails = async (loanId, loanAmount) => {
+  const fetchCollateralDetails = useCallback(async (loanId, loanAmount) => {
     try {
       const collateral = await fetchRequiredCollateral(loanAmount);
       setRequiredCollateral((prev) => ({
@@ -54,7 +54,7 @@ const DashboardContent = () => {
     } catch (error) {
       console.error("Error fetching collateral details:", error);
     }
-  };
+  }, [fetchRequiredCollateral]);
 
   useEffect(() => {
     const fetchOwnerAddress = async () => {
@@ -66,7 +66,7 @@ const DashboardContent = () => {
     };
 
     fetchOwnerAddress();
-  }, [setOwnerAddress, getOnwerAddress]);
+  }, [getOnwerAddress, getContractBalance]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,22 +88,23 @@ const DashboardContent = () => {
     };
 
     fetchData();
-  }, [loanRequests, getAllLoanRequests, fetchRequiredCollateral]);
+  }, [loanRequests, fetchLoanPaymentDetails, fetchCollateralDetails]);
 
-  const isOwner = address && ownerAddress && address.toLowerCase() === ownerAddress.toLowerCase();
+  const isOwner = useMemo(() => {
+    return address && ownerAddress && address.toLowerCase() === ownerAddress.toLowerCase();
+  }, [address, ownerAddress]);
 
-  const handleWithdrawal = async () => {
+  const handleWithdrawal = useCallback(async () => {
     if (!withdrawAddress) {
       toast.error("Input valid address");
       return;
     }
 
-    setIsWithdrawing(true); // Start loading
+    setIsWithdrawing(true);
 
     try {
       const result = await withdrawalHandler(withdrawAddress);
       if(result) {
-
         setWithdrawAddress(""); 
         setContractBalance("0")
       }
@@ -111,15 +112,15 @@ const DashboardContent = () => {
       console.error("Withdrawal Error:", error);
       toast.error("Withdrawal failed. Please try again.");
     } finally {
-      setIsWithdrawing(false); // Stop loading
+      setIsWithdrawing(false);
     }
-  };
+  }, [withdrawAddress, withdrawalHandler]);
 
   return (
     <div className="p-6 space-y-8 bg-black min-h-screen">
       {/* Welcome Message */}
       <div className="text-gray-100 text-2xl font-semibold">
-        Welcome, {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "User"}
+        Welcome, {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "user"}
       </div>
 
       {/* Withdraw Section (Only for Owner) */}
@@ -172,7 +173,7 @@ const DashboardContent = () => {
           <div className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-gray-400 text-sm font-medium">Active Loans</p>
+                <p className="text-gray-400 text-sm font-medium">Platform's Active Loans</p>
                 <p className="text-3xl font-bold text-gray-100 mt-2">{activeLoans}</p>
                 <div className="flex items-center mt-2 text-emerald-400 text-sm">
                 </div>
@@ -226,7 +227,7 @@ const DashboardContent = () => {
             <h3 className="text-lg font-semibold text-gray-100 mb-4">Your Active Positions</h3>
             <div className="space-y-4">
               {loanRequests
-                .filter((loan) => loan.isActive)
+                .filter((loan) => loan.isActive && String(loan.borrower).toLowerCase() === address?.toString().toLowerCase())
                 .map((loan) => (
                   <div key={loan.loanId} className="p-4 bg-gray-900/50 rounded-xl hover:bg-gray-900/70 transition-colors">
                     <div className="flex justify-between items-start mb-2">
@@ -288,4 +289,4 @@ const DashboardContent = () => {
   );
 };
 
-export default DashboardContent;
+export default React.memo(DashboardContent);

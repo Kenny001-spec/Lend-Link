@@ -74,7 +74,7 @@ contract LoanManager is ILoanManager, LoanStorage, ReentrancyGuard, Pausable {
         borrowerLoans[msg.sender].push(loanCounter);
         tryAutomaticMatch(loanCounter);
 
-        emit LoanRequested(loanCounter, msg.sender, amount, msg.value);
+        emit LoanRequested(loanCounter, msg.sender, amount, msg.value, maxInterestRate, duration);
     }
 
     function fundLoan(uint256 loanId) external whenNotPaused nonReentrant {

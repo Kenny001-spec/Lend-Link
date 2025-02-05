@@ -132,9 +132,6 @@ const BorrowPage = () => {
     setShowActiveLoans((prev) => !prev)
   }
 
-  const estimatedInterest =
-    Number.parseFloat(formData.amount || 0) * (formData.maxInterestRate / 100) * (formData.duration / 365)
-
   const validateForm = () => {
     if (!address) {
       toast.error("Please connect your wallet first")

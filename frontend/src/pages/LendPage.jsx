@@ -62,7 +62,7 @@ const LendingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
               { label: "Available Loans", value: stats.totalLoans },
-              { label: "Avg Interest Rate", value: `${stats.avgInterestRate}%` },
+              { label: "Avg Interest Rate", value: `${isNaN(stats.avgInterestRate) ? 0 : stats.avgInterestRate}%` },
             ].map((stat, index) => (
               <div key={index} className="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-gray-600 transition-all">
                 <h3 className="text-lg text-gray-400 mb-2">{stat.label}</h3>
