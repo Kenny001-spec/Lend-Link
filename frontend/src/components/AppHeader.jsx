@@ -14,7 +14,7 @@ const AppHeader = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-orange-500/10">
       <nav className="container mx-auto px-3 sm:px-4">
         <div className="h-16 flex items-center justify-between">
-       
+
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-4">
               <motion.div
@@ -24,7 +24,7 @@ const AppHeader = () => {
               >
                 <Hexagon className="h-5 w-5 text-black" />
               </motion.div>
-              
+
               <span className="text-lg sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-300">
                 LENDLINK
               </span>
@@ -51,9 +51,11 @@ const AppHeader = () => {
             >
               Borrow
             </Link>
+
+            
           </div>
 
-          
+
           <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Hamburger Menu Button */}
             <button
@@ -67,25 +69,25 @@ const AppHeader = () => {
               )}
             </button>
 
-            <motion.button
+            {/* <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="hidden sm:block p-1.5 sm:p-2 rounded-lg hover:bg-orange-500/10"
             >
               <Bell className="h-5 w-5 text-gray-400" />
-            </motion.button>
+            </motion.button> */}
 
-         
-            <motion.button
+
+            {/* <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="p-1.5 sm:p-2 rounded-lg hover:bg-orange-500/10"
             >
               <User className="h-5 w-5 text-gray-400" />
-            </motion.button>
+            </motion.button> */}
 
             {/* Connect Wallet Button */}
-            <div className="flex items-center">
+            <div className=" hidden md:flex  items-center">
               <div className="scale-90 sm:scale-100">
                 <appkit-button />
               </div>
@@ -104,6 +106,12 @@ const AppHeader = () => {
             >
               <div className="py-2 pl-6">
                 <div className="flex flex-col space-y-3">
+
+                <div className="ml-o  flex items-center">
+                    <div className="scale-90 sm:scale-100">
+                      <appkit-button/>
+                    </div>
+                  </div>
                   <Link
                     to="/app"
                     className="text-gray-300 font-mono hover:text-orange-500 transition-colors text-sm"
@@ -125,6 +133,8 @@ const AppHeader = () => {
                   >
                     Borrow
                   </Link>
+
+                  
                 </div>
               </div>
             </motion.div>
