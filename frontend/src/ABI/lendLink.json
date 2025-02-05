@@ -216,7 +216,7 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
         "name": "borrower",
         "type": "address"
@@ -231,6 +231,18 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "collateral",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxInterestRate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "duration",
         "type": "uint256"
       }
     ],

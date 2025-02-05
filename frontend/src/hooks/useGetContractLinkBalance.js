@@ -24,10 +24,10 @@ const useGetContractLinkBalance = () => {
     async () => {
       
 
-      if (!address) {
-        toast.error("Please connect your wallet");
-        return;
-      }
+      // if (!address) {
+      //   toast.error("Please connect your wallet");
+      //   return;
+      // }
 
       if (!linkContract) {
         toast.error("Contract not found");

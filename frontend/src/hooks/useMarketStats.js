@@ -39,6 +39,11 @@ export const useMarketStats = () => {
         loanRequests.forEach(loan => {
           if (loan.isActive) {
             totalLiquidity += Number(loan.amount);
+            
+          }
+
+          if(loan) {
+
             allActiveLoans++
             totalInterestRate += Number(loan.maxInterestRate);
           }
