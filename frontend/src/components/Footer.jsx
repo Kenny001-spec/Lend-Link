@@ -34,7 +34,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-gray-400">
-              Empowering financial inclusion through blockchain technology on CrossFI.
+              Empowering financial inclusion through blockchain technology.
             </p>
           </motion.div>
 
