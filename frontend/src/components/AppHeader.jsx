@@ -11,7 +11,7 @@ const AppHeader = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-orange-500/10">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-[#808080]">
       <nav className="container mx-auto px-3 sm:px-4">
         <div className="h-16 flex items-center justify-between">
 
@@ -35,19 +35,19 @@ const AppHeader = () => {
           <div className="hidden md:flex items-center justify-center space-x-6 lg:space-x-8">
             <Link
               to="/app"
-              className="text-gray-300 hover:text-blue-400 transition-colors"
+              className="text-gray-300 lg:font-bold hover:text-blue-400 transition-colors"
             >
               Dashboard
             </Link>
             <Link
               to="/app/lend"
-              className="text-gray-300 hover:text-blue-400 transition-colors"
+              className="text-gray-300 lg:font-bold hover:text-blue-400 transition-colors"
             >
               Lend
             </Link>
             <Link
               to="/app/borrow"
-              className="text-gray-300 hover:text-blue-400 transition-colors"
+              className="text-gray-300 lg:font-bold hover:text-blue-400 transition-colors"
             >
               Borrow
             </Link>
@@ -69,24 +69,6 @@ const AppHeader = () => {
               )}
             </button>
 
-            {/* <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="hidden sm:block p-1.5 sm:p-2 rounded-lg hover:bg-orange-500/10"
-            >
-              <Bell className="h-5 w-5 text-gray-400" />
-            </motion.button> */}
-
-
-            {/* <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-1.5 sm:p-2 rounded-lg hover:bg-orange-500/10"
-            >
-              <User className="h-5 w-5 text-gray-400" />
-            </motion.button> */}
-
-            {/* Connect Wallet Button */}
             <div className=" hidden md:flex  items-center">
               <div className="scale-90 sm:scale-100">
                 <appkit-button />

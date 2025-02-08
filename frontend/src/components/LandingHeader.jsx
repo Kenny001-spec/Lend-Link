@@ -7,7 +7,7 @@ const LandingHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-orange-500/10">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-[#808080]">
       <nav className="container mx-auto px-3 sm:px-4 h-16 sm:h-20">
         <div className="flex items-center justify-between h-full">
        
@@ -26,15 +26,15 @@ const LandingHeader = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
-            <Link to="/docs" className="text-white hover:text-blue-400 transition-colors font-semibold text-sm lg:text-base">
+            <Link to="/docs" className="text-white hover:text-blue-400 transition-colors font-bold text-sm lg:text-base">
               Docs
             </Link>
-            <Link to="/how-it-works" className="text-white hover:text-blue-400 transition-colors font-semibold text-sm lg:text-base">
+            <Link to="/how-it-works" className="text-white hover:text-blue-400 transition-colors font-bold text-sm lg:text-base">
               How It Works
             </Link>
             <Link
               to="/app"
-              className="inline-flex h-9 lg:h-10 items-center justify-center rounded-md bg-gradient-to-r from-blue-600 to-blue-300 px-4 lg:px-8 text-base lg:text-lg font-semibold text-black transition-colors hover:opacity-90"
+              className="inline-flex h-9 lg:h-10 items-center justify-center rounded-md bg-gradient-to-r from-blue-600 to-blue-300 px-4 lg:px-4 text-base lg:text-lg font-bold text-black transition-colors hover:opacity-90"
             >
               Open dApp
             </Link>
