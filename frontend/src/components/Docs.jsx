@@ -574,7 +574,7 @@ const Documentation = () => {
                   </h3>
                   <p>
                     If you need assistance or have questions about using the
-                    LENDBIT platform, our support team is here to help. Whether
+                    LENDLINK platform, our support team is here to help. Whether
                     you have technical issues, need guidance on lending or
                     borrowing, or want to learn more about platform features,
                     our dedicated team is available to provide the support you
